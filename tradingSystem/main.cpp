@@ -15,8 +15,25 @@ public:
 };
 
 
+class Price4 {
+public:
+    Price4(string s) {
+        int idx = s.find_first_of('.');
+        if (idx != string::npos)
+            s = s.substr(0, idx) + s.substr(idx + 1, 4);
+        price = stoi(s);
+    }
+    Price4(float p) {
+        price = int(p * 10000);
+    }
+
+private:
+    int64_t price; // denote int(real_price*10000)
+};
+
+
 auto cmp = [](Order a, Order b) {
-    if (a.buy) {
+    if (a.side = OrderSide::BUY) {
         // Buys should be ordered high->low for prospective sellers
         if (a.price != b.price) {
             return a.price > b.price;
@@ -35,7 +52,7 @@ auto cmp = [](Order a, Order b) {
         }
     }
 };
-
+// price4 & Orderbook
 
 
 
