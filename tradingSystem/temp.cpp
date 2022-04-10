@@ -41,6 +41,29 @@ auto cmp = [](Order a, Order b) {
 
 
 
+/*
+auto cmp = [](Order a, Order b) {
+    if (a.side = Order::OrderSide::BUY) {
+        // Buys should be ordered high->low for prospective sellers
+        if (a.price != b.price) {
+            return a.price > b.price;
+        }
+        else {
+            return a.time < b.time;
+        }
+    }
+    else {
+        // Sells should be ordered low->high for prospective buyers
+        if (a.price != b.price) {
+            return a.price < b.price;
+        }
+        else {
+            return a.time < b.time;
+        }
+    }
+};*/
+
+
 
 void solve() {
     int n;

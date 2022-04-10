@@ -7,3 +7,4 @@ project ("tradingSystem")
 
 # Include sub-projects.
 add_subdirectory ("tradingSystem")
+include_directories([=["D:\dev\projects\vcpkg\packages\jsoncpp_x86-windows\include"]=])

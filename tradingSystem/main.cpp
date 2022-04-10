@@ -1,62 +1,38 @@
-#include <string>
-#include <iostream>
+
+// #include r"D:\dev\projects\vcpkg\packages\jsoncpp_x86-windows\include\json\json.h"
+
+// "-DCMAKE_TOOLCHAIN_FILE=D:/dev/projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
+
+
+//The package jsoncpp provides CMake targets :
+
+//find_package(jsoncpp CONFIG REQUIRED)
+//target_link_libraries(main PRIVATE jsoncpp_lib jsoncpp_object JsonCpp::JsonCpp)
+#include "order_book.h"
+#include "price.h"
+#include "order.h"
+
 using namespace std;
-
-enum OrderSide {BUY, SELL};
-
-class Order {
-public:
-	int64_t order_id; 
-	string symbol; 
-	OrderSide side;
-	float price;
-	int64_t quantity;
-    int64_t time;
-};
-
-
-class Price4 {
-public:
-    Price4(string s) {
-        int idx = s.find_first_of('.');
-        if (idx != string::npos)
-            s = s.substr(0, idx) + s.substr(idx + 1, 4);
-        price = stoi(s);
-    }
-    Price4(float p) {
-        price = int(p * 10000);
-    }
-
-private:
-    int64_t price; // denote int(real_price*10000)
-};
-
-
-auto cmp = [](Order a, Order b) {
-    if (a.side = OrderSide::BUY) {
-        // Buys should be ordered high->low for prospective sellers
-        if (a.price != b.price) {
-            return a.price > b.price;
-        }
-        else {
-            return a.time < b.time;
-        }
-    }
-    else {
-        // Sells should be ordered low->high for prospective buyers
-        if (a.price != b.price) {
-            return a.price < b.price;
-        }
-        else {
-            return a.time < b.time;
-        }
-    }
-};
-// price4 & Orderbook
-
 
 
 int main() {
-	cout << 123 << endl;
+    auto p1 = Price4("12.23245"), p2 = Price4("20.23245");
+    p1 = p2;
+    cout << p1.to_str() << endl;
+
+    auto buy_book = OrderBook(OrderSide::BUY), sell_book = OrderBook(OrderSide::SELL);
+    Order orders[] = {
+        Order(2, "AAPL", OrderSide::BUY, Price4("12.3"), 200, 10005),
+        Order(1, "AAPL", OrderSide::BUY, Price4("12.23245"), 100, 10000),
+        Order(3, "GOOG", OrderSide::BUY, Price4("120"), 300, 10002),
+        Order(4, "AAPL", OrderSide::BUY, Price4("12.3"), 200, 10000),
+        Order(5, "AAPL", OrderSide::BUY, Price4("12.3"), 200, 10001)
+    };
+    for (int i=0; i<sizeof(orders) / sizeof(Order); i++)
+        buy_book.insert(orders[i]);
+    buy_book.print();
+    buy_book.remove(2);
+    buy_book.print();
 	return 0;
 }
+
