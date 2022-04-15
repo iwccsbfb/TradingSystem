@@ -1,16 +1,28 @@
-
-// #include r"D:\dev\projects\vcpkg\packages\jsoncpp_x86-windows\include\json\json.h"
-
-// "-DCMAKE_TOOLCHAIN_FILE=D:/dev/projects/vcpkg/scripts/buildsystems/vcpkg.cmake"
-
-
-//The package jsoncpp provides CMake targets :
-
-//find_package(jsoncpp CONFIG REQUIRED)
-//target_link_libraries(main PRIVATE jsoncpp_lib jsoncpp_object JsonCpp::JsonCpp)
 #include "order_book.h"
 #include "price.h"
 #include "order.h"
+
+/*
+TODO: install boost library; json library; 
+    check boost set find: https://www.boost.org/doc/libs/1_43_0/doc/html/intrusive/advanced_lookups_insertions.html
+    boost::intrusive::set find
+    static polymorphism;
+
+    void * + dynamic_cast or reinterpret_cast ?
+    template: std::enable_if, std::conditional
+
+    https://www.szse.cn/aboutus/research/secuities/documents/t20040106_531488.html
+
+Matching Engine:
+
+publisher:
+
+
+
+std::variant; std::conditional_if
+*/
+
+
 
 using namespace std;
 
@@ -22,11 +34,11 @@ int main() {
 
     auto buy_book = OrderBook(OrderSide::BUY), sell_book = OrderBook(OrderSide::SELL);
     Order orders[] = {
-        Order(2, "AAPL", OrderSide::BUY, Price4("12.3"), 200, 10005),
-        Order(1, "AAPL", OrderSide::BUY, Price4("12.23245"), 100, 10000),
-        Order(3, "GOOG", OrderSide::BUY, Price4("120"), 300, 10002),
-        Order(4, "AAPL", OrderSide::BUY, Price4("12.3"), 200, 10000),
-        Order(5, "AAPL", OrderSide::BUY, Price4("12.3"), 200, 10001)
+        Order(2, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10005),
+        Order(1, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.23245"), 100, 10000),
+        Order(3, "GOOG", OrderSide::BUY, OrderType::LIMIT, Price4("120"), 300, 10002),
+        Order(4, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10000),
+        Order(5, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10001)
     };
     for (int i=0; i<sizeof(orders) / sizeof(Order); i++)
         buy_book.insert(orders[i]);

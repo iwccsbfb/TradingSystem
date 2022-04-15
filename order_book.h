@@ -45,7 +45,7 @@ public:
         // erase from both map and set
         auto o = Order();
         o.order_id = order_id;
-        // auto it = orders.find(o);
+        // auto it = orders.find(order_id, );
         // TODO: set.find is faster than std::find, but set.find cannot use customized == operator
         auto it = std::find(orders.begin(), orders.end(), o);
         orders.erase(it);
