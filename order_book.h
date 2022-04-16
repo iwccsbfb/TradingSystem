@@ -1,4 +1,7 @@
-#pragma once
+// #pragma once
+#ifndef ORDER_BOOK_H
+#define ORDER_BOOK_H
+
 #include <string>
 #include <iostream>
 #include <set>
@@ -52,10 +55,10 @@ public:
     }
 
     void print() {
-        cout << side << endl;
+        std::cout << side << std::endl;
         for (auto o : orders)
-            cout << '\t' << o.order_id << ' ' << o.time << ' ' 
-            << o.price.to_str() << ' ' << o.quantity << endl;
+            std::cout << '\t' << o.order_id << ' ' << o.time << ' ' 
+            << o.price.to_str() << ' ' << o.quantity << std::endl;
     }
 
     /*
@@ -73,6 +76,9 @@ public:
     }*/
 
 private:
-    set<Order> orders;
+    std::set<Order> orders;
     OrderSide side;
 };
+
+
+#endif

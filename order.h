@@ -1,12 +1,12 @@
-#pragma once
+#ifndef ORDER_H
+#define ORDER_H
+
 #include "price.h"
+#include <boost/intrusive/set.hpp>
+#include <boost/intrusive/unordered_set.hpp>
 
 
 #include <string>
-#include <iostream>
-#include <set>
-using namespace std;
-
 
 class Price4;
 static int64_t max_order_id = 0;
@@ -16,11 +16,11 @@ enum OrderType { MARKET, LIMIT, ICEBERG};
 const int ICEBERG_DISPLAY_QUANTITY = 100;
 
 
-class Order {
+class Order : public boost::intrusive::set_base_hook<>, public boost::intrusive::unordered_set_base_hook<> {
 public:
 
     int64_t order_id;
-    string symbol;
+    std::string symbol;
     OrderSide side;
     OrderType order_type;
     Price4 price;
@@ -29,7 +29,7 @@ public:
     int64_t hidden_quantity = 0; // TODO: where to set this as 0
 
     Order() = default;
-    Order(int64_t order_id, string symbol, OrderSide side, OrderType order_type, Price4 price, int64_t quantity, int64_t time) 
+    Order(int64_t order_id, std::string symbol, OrderSide side, OrderType order_type, Price4 price, int64_t quantity, int64_t time) 
         : order_id(order_id), symbol(symbol), side(side), order_type(order_type), price(price), quantity(quantity), time(time)
     {
         if(order_type == OrderType::ICEBERG && quantity > ICEBERG_DISPLAY_QUANTITY) {
@@ -85,3 +85,7 @@ struct std::hash<Order>
 class IcebergOrder : public Order {
     IcebergOrder() {}
 };
+
+
+
+#endif

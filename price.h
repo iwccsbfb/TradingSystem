@@ -1,6 +1,9 @@
-#pragma once
+#ifndef PRICE_H
+#define PRICE_H
+
+
+//#pragma once
 #include <string>
-using namespace std;
 
 class Price4 {
 public:
@@ -9,11 +12,11 @@ public:
 
     // convert from string
     explicit Price4(const std::string& s) {
-        string target = s;
+        std::string target = s;
         int idx = s.find_first_of('.');
         int len = 0; // length of after .
-        if (idx != string::npos) {
-            string p1 = s.substr(0, idx), p2 = s.substr(idx + 1, 4);
+        if (idx != std::string::npos) {
+            std::string p1 = s.substr(0, idx), p2 = s.substr(idx + 1, 4);
             target = p1 + p2;
             len = p2.size();
         }
@@ -53,3 +56,8 @@ public:
 private:
     long unscaled_;
 };
+
+
+
+
+#endif
