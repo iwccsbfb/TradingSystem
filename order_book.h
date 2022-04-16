@@ -11,7 +11,7 @@
 #include "order.h"
 /*
 A few ways to design orderBook:
-1. only save prices; unordered_map that maps price to a OrderQueue;
+1. First level data structure is a deque of prices; 
     Then how to design the queue? use list or deque
 2. lasy handling; Keep inserting all the delete values to another priority_queue.
     When you are popping values from the original priority queue, check with top
@@ -19,46 +19,59 @@ A few ways to design orderBook:
     Can take up twice the memory, but average delete and inserts remain O(logN).
     del_pq could grow very big - then how to delete elements from del_pq?
 4. one priority_queue (heap);
-    delete: O(N) to find an element;
-3. use set (binary search tree):
-    std::set<int> pq;
-    //accessing the smallest element(use as min heap)
-    *pq.begin();
-    //accessing the largest element (use as max heap)
-    *pq.rbegin();
-    //to delete the integer '6'
-    auto it = pq.find(6);
-    pq.erase(it);
+    doesn't work for delete: It takes O(N) to find an element;
+3. use set (binary search tree);
+    By default, bst is sorted by order preference - not by order_id. 
+    Therefore when we do find by order_id, we need to have a map to get this order object, thus to achieve O(LogN) .
 */
 
-// store Order or Order*
+
 class OrderBook {
 public:
     OrderBook(OrderSide side): side(side) {}
 
     // insert: O(logN)
-    void insert(const Order& order) {
+    void insert(Order& order) {
         assert(order.side == side);
-        orders.insert(order);
+        
+        std::set<Order> *orders;
+        if(order.side == OrderSide::BUY)
+            orders = &buy_orders;
+        else
+            orders = &sell_orders;
+        orders->insert(order);
+        m[order.order_id] = &order;
     }
 
 
     // remove certain element in a set: log(N)
     void remove(int64_t order_id) {
         // erase from both map and set
-        auto o = Order();
-        o.order_id = order_id;
-        // auto it = orders.find(order_id, );
-        // TODO: set.find is faster than std::find, but set.find cannot use customized == operator
-        auto it = std::find(orders.begin(), orders.end(), o);
-        orders.erase(it);
+        Order* o = m[order_id];
+        m.erase(order_id);
+
+        std::set<Order> *orders;
+        if(o->side == OrderSide::BUY)
+            orders = &buy_orders;
+        else
+            orders = &sell_orders;
+        auto it = orders->find(*o);
+        orders->erase(it);
     }
 
     void print() {
-        std::cout << side << std::endl;
-        for (auto o : orders)
-            std::cout << '\t' << o.order_id << ' ' << o.time << ' ' 
-            << o.price.to_str() << ' ' << o.quantity << std::endl;
+        std::cout << "BID:" << std::endl;
+        for (auto o : buy_orders)
+            std::cout << '\t' << o.order_id << ' ' << o.quantity << ' ' << o.price.to_str() << ' ' 
+             << o.time << ' ' << std::endl;
+
+        std::cout << "ASK:" << std::endl;
+        for (auto o : sell_orders) {
+            std::cout << '\t' << o.price.to_str() << ' '  << o.quantity << ' ' << o.order_id << ' '
+             << o.time << ' ' << std::endl;
+            // std::cout << '\t' << o.order_id << ' ' << o.quantity << ' ' << o.price.to_str() << ' ' 
+            //  << o.time << ' ' << std::endl;
+        }
     }
 
     /*
@@ -76,7 +89,8 @@ public:
     }*/
 
 private:
-    std::set<Order> orders;
+    std::set<Order> buy_orders, sell_orders;
+    std::unordered_map<int64_t, Order*> m; // map order id to Order
     OrderSide side;
 };
 

@@ -2,10 +2,8 @@
 #define ORDER_H
 
 #include "price.h"
-#include <boost/intrusive/set.hpp>
-#include <boost/intrusive/unordered_set.hpp>
 
-
+#include <set>
 #include <string>
 
 class Price4;
@@ -16,7 +14,7 @@ enum OrderType { MARKET, LIMIT, ICEBERG};
 const int ICEBERG_DISPLAY_QUANTITY = 100;
 
 
-class Order : public boost::intrusive::set_base_hook<>, public boost::intrusive::unordered_set_base_hook<> {
+class Order {
 public:
 
     int64_t order_id;
@@ -72,6 +70,7 @@ public:
     }  
 };
 
+// hash only based on order_id
 template <>
 struct std::hash<Order>
 {

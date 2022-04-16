@@ -21,32 +21,8 @@ std::variant; std::conditional_if
 // #include "order_book.h"
 #include "price.h"
 #include "order.h"
+#include "order_book.h"
 
-#include <boost/intrusive/set.hpp>
-#include <boost/container/set.hpp>
-#include <iostream>
-#include <algorithm>
-
-struct delete_disposer
-{
-    void operator()(Order *delete_this)
-    {
-        delete delete_this;
-    }
-};
-
-struct OrderIdEqual
-{
-    bool operator()(const int num, const Order &o) const
-    {
-        return num == o.order_id;
-    }
-
-    bool operator()(const Order &o, const int num) const
-    {
-        return num == o.order_id;
-    }
-};
 
 int main()
 {
@@ -54,9 +30,7 @@ int main()
     p1 = p2;
     std::cout << p1.to_str() << std::endl;
 
-    boost::intrusive::set<Order> s;
-
-    // auto buy_book = OrderBook(OrderSide::BUY), sell_book = OrderBook(OrderSide::SELL);
+    auto buy_book = OrderBook(OrderSide::BUY), sell_book = OrderBook(OrderSide::SELL);
     Order orders[] = {
         Order(2, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10005),
         Order(1, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.23245"), 100, 10000),
@@ -64,22 +38,10 @@ int main()
         Order(4, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10000),
         Order(5, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10001)};
     for (int i = 0; i < sizeof(orders) / sizeof(Order); i++)
-        s.insert(orders[i]);
-    auto dummy = Order();
-    dummy.order_id = 1;
+        buy_book.insert(orders[i]);
 
-    auto temp = s.find(1, OrderIdEqual());
-    if (temp != s.end())
-    {
-        std::cout << temp->order_id << std::endl;
-        // s.erase(dummy);
-    }
-    for (auto it : s)
-        std::cout << it.order_id << std::endl;
-    // //     // for (int i=0; i<sizeof(orders) / sizeof(Order); i++)
-    // //     //     buy_book.insert(orders[i]);
-    // //     // buy_book.print();
-    // //     // buy_book.remove(2);
-    // //     // buy_book.print();
+    buy_book.print();
+    buy_book.remove(2);
+    buy_book.print();
     return 0;
 }
