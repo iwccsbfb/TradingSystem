@@ -2,11 +2,12 @@
 #ifndef ORDER_BOOK_H
 #define ORDER_BOOK_H
 
+#include "order.h"
 #include <string>
 #include <iostream>
 #include <set>
 #include <unordered_map>
-#include "order.h"
+#include <nlohmann/json.hpp>
 /*
 A few ways to design orderBook:
 1. First level data structure is a deque of prices; 
@@ -29,30 +30,21 @@ public:
     OrderBook() = default;
 
     // insert: O(logN)
-    void insert(Order& order) {        
-        std::set<Order> *orders;
-        if(order.side == OrderSide::BUY)
-            orders = &buy_orders;
-        else
-            orders = &sell_orders;
-        orders->insert(order);
+    void insert(const Order& order) {        
+        std::set<Order> &orders = (order.side == OrderSide::BUY) ? buy_orders : sell_orders;
+        orders.insert(order);
         m[order.order_id] = &order;
     }
 
-
     // remove certain element in a set: log(N)
-    void remove(int64_t order_id) {
+    void remove(const int64_t order_id) {
         // erase from both map and set
-        Order* o = m[order_id];
+        const Order* o = m[order_id];
         m.erase(order_id);
 
-        std::set<Order> *orders;
-        if(o->side == OrderSide::BUY)
-            orders = &buy_orders;
-        else
-            orders = &sell_orders;
-        auto it = orders->find(*o);
-        orders->erase(it);
+        std::set<Order> &orders = (o->side == OrderSide::BUY) ? buy_orders : sell_orders;
+        auto it = orders.find(*o);
+        orders.erase(it);
     }
 
     void print() {
@@ -84,14 +76,20 @@ public:
         }
     }*/
 
-    void end_of_day() {
+    nlohmann::json to_json() {
         // dump GTC orders at the end of day
+        nlohmann::json j;
+        for(auto o: buy_orders) {
+            if (o.tif == TimeInForce::GTC) {
 
+            }
+        }
+        return j;
     }
 
 private:
     std::set<Order> buy_orders, sell_orders;
-    std::unordered_map<int64_t, Order*> m; // map order id to Order
+    std::unordered_map<int64_t, const Order*> m; // map order id to Order
 };
 
 

@@ -4,6 +4,7 @@
 
 //#pragma once
 #include <string>
+#include <iostream>
 
 class Price4 {
 public:
@@ -53,10 +54,14 @@ public:
         unscaled_ = other.unscaled_;
         return *this;
     }
+
 private:
     long unscaled_;
 };
 
+std::ostream & operator<<(std::ostream& os, Price4 const& m) {
+    return os << m.to_str();
+}
 
 
 

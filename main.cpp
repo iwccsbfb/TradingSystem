@@ -16,28 +16,53 @@ Matching Engine:
 publisher:
 
 std::variant; std::conditional_if
+
+
+https://towardsdatascience.com/how-to-build-a-multi-threaded-pipeline-in-c-with-std-async-78edc19e862d
+
+standard testing case:
+
+
 */
 
-// #include "order_book.h"
 #include "price.h"
 #include "order.h"
 #include "order_book.h"
 
 #include <nlohmann/json.hpp>
+#include <fstream>
 
 int main()
 {
-    auto p1 = Price4("12.23245"), p2 = Price4("20.23245");
-    p1 = p2;
-    std::cout << p1.to_str() << std::endl;
+    // auto j3 = nlohmann::json::parse(R"({"happy": true, "pi": 3.141})");
+    // nlohmann::json j = "{ \"happy\": true, \"pi\": 3.141 }"_json;
+    // j["sub"] = j3;
+    // std::string s = j.dump();
+
+    std::ifstream infile("input.jsonl");
+    std::string line;
+    while (std::getline(infile, line))
+    {
+        auto j = nlohmann::json::parse(line);
+        int64_t time = j["time"], order_id = j["order_id"];
+        if(j["type"] == std::string("NEW")) {
+            std::string symbol = j["symbol"];
+            OrderSide side = OrderSideConverter::from_string(j["side"]);
+            int quantity = j["quantity"];
+            auto price = Price4(std::string(j["limit_price"])); 
+            auto order = Order(order_id, symbol, side, OrderType::LIMIT, TimeInForce::DAY, price, quantity, time);
+        }else if(j["type"] == std::string("CANCEL")) {
+
+        }
+    }
 
     auto book = OrderBook();
     Order orders[] = {
-        Order(2, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10005),
-        Order(1, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.23245"), 100, 10000),
-        Order(3, "GOOG", OrderSide::BUY, OrderType::LIMIT, Price4("120"), 300, 10002),
-        Order(4, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10000),
-        Order(5, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10001)};
+        Order(2, "AAPL", OrderSide::BUY, OrderType::LIMIT, TimeInForce::DAY, Price4("12.3"), 200, 10005),
+        Order(1, "AAPL", OrderSide::BUY, OrderType::LIMIT, TimeInForce::DAY, Price4("12.23245"), 100, 10000),
+        Order(3, "GOOG", OrderSide::BUY, OrderType::LIMIT, TimeInForce::GTC, Price4("120"), 300, 10002),
+        Order(4, "AAPL", OrderSide::BUY, OrderType::LIMIT, TimeInForce::DAY, Price4("12.3"), 200, 10000),
+        Order(5, "AAPL", OrderSide::BUY, OrderType::LIMIT, TimeInForce::GTC, Price4("12.3"), 200, 10001)};
     for (int i = 0; i < sizeof(orders) / sizeof(Order); i++)
         book.insert(orders[i]);
 
