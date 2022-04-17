@@ -6,8 +6,6 @@
 #include <iostream>
 #include <set>
 #include <unordered_map>
-#include <cassert>
-#include <algorithm>
 #include "order.h"
 /*
 A few ways to design orderBook:
@@ -28,12 +26,10 @@ A few ways to design orderBook:
 
 class OrderBook {
 public:
-    OrderBook(OrderSide side): side(side) {}
+    OrderBook() = default;
 
     // insert: O(logN)
-    void insert(Order& order) {
-        assert(order.side == side);
-        
+    void insert(Order& order) {        
         std::set<Order> *orders;
         if(order.side == OrderSide::BUY)
             orders = &buy_orders;
@@ -88,10 +84,14 @@ public:
         }
     }*/
 
+    void end_of_day() {
+        // dump GTC orders at the end of day
+
+    }
+
 private:
     std::set<Order> buy_orders, sell_orders;
     std::unordered_map<int64_t, Order*> m; // map order id to Order
-    OrderSide side;
 };
 
 

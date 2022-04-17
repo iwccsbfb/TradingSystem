@@ -23,6 +23,7 @@ std::variant; std::conditional_if
 #include "order.h"
 #include "order_book.h"
 
+#include <nlohmann/json.hpp>
 
 int main()
 {
@@ -30,7 +31,7 @@ int main()
     p1 = p2;
     std::cout << p1.to_str() << std::endl;
 
-    auto buy_book = OrderBook(OrderSide::BUY), sell_book = OrderBook(OrderSide::SELL);
+    auto book = OrderBook();
     Order orders[] = {
         Order(2, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10005),
         Order(1, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.23245"), 100, 10000),
@@ -38,10 +39,10 @@ int main()
         Order(4, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10000),
         Order(5, "AAPL", OrderSide::BUY, OrderType::LIMIT, Price4("12.3"), 200, 10001)};
     for (int i = 0; i < sizeof(orders) / sizeof(Order); i++)
-        buy_book.insert(orders[i]);
+        book.insert(orders[i]);
 
-    buy_book.print();
-    buy_book.remove(2);
-    buy_book.print();
+    book.print();
+    book.remove(2);
+    book.print();
     return 0;
 }
