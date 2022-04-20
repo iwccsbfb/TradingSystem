@@ -1,0 +1,18 @@
+{
+    "symbols": [
+        "AAPL",
+        "GOOG",
+        "TSLA"
+    ],
+    "tick_size": [
+        {
+            "from_price": "0",
+            "to_price": "1",
+            "tick_size": "0.0001"
+        },
+        {
+            "from_price": "1",
+            "tick_size": "0.01"
+        }
+    ]
+}

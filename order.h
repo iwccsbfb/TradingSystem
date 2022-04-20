@@ -36,7 +36,6 @@ const std::vector<std::string> timeInForce_str = {"DAY", "IOC", "GTC"};
 
 template <class T, const std::vector<std::string> *values>
 class EnumConverter {
-    // static const std::vector<std::string> values() = 0;
 public:
     static T from_string(std::string &&s) {
         for(int i=0; i<values->size(); i++) 
@@ -157,7 +156,7 @@ struct std::hash<Order>
 {
     std::size_t operator()(const Order &k) const
     {
-        return hash<int64_t>()(k.order_id);
+        return std::hash<int64_t>()(k.order_id);
     }
 };
 

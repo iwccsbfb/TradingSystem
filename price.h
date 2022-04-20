@@ -64,5 +64,14 @@ std::ostream & operator<<(std::ostream& os, Price4 const& m) {
 }
 
 
+template <>
+struct std::hash<Price4>
+{
+    std::size_t operator()(const Price4 &p) const
+    {
+        return std::hash<int64_t>()(p.unscaled());
+    }
+};
+
 
 #endif

@@ -19,6 +19,8 @@ std::variant; std::conditional_if
 
 
 https://towardsdatascience.com/how-to-build-a-multi-threaded-pipeline-in-c-with-std-async-78edc19e862d
+static cannot virtual; 
+
 
 standard testing case:
 
@@ -28,6 +30,7 @@ standard testing case:
 #include "price.h"
 #include "order.h"
 #include "order_book.h"
+#include "exchange.h"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -39,10 +42,11 @@ int main()
     // j["sub"] = j3;
     // std::string s = j.dump();
 
-    std::ifstream infile("input.jsonl");
+    std::ifstream infile("data/input.jsonl");
     std::string line;
     while (std::getline(infile, line))
     {
+        // std::cout << line << std::endl;
         auto j = nlohmann::json::parse(line);
         int64_t time = j["time"], order_id = j["order_id"];
         if(j["type"] == std::string("NEW")) {
