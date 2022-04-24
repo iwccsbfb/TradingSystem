@@ -35,16 +35,18 @@ standard testing case:
 #include <nlohmann/json.hpp>
 #include <fstream>
 
+
+/* 
+How to run: cat input.jsonl | main.exe
+*/
+
 int main()
 {
-    // auto j3 = nlohmann::json::parse(R"({"happy": true, "pi": 3.141})");
-    // nlohmann::json j = "{ \"happy\": true, \"pi\": 3.141 }"_json;
-    // j["sub"] = j3;
-    // std::string s = j.dump();
+    Config config(std::string("data/config.jsonl"));
 
-    std::ifstream infile("data/input.jsonl");
+    // std::ifstream infile("data/input.jsonl");
     std::string line;
-    while (std::getline(infile, line))
+    while (std::getline(std::cin, line))
     {
         // std::cout << line << std::endl;
         auto j = nlohmann::json::parse(line);
@@ -54,9 +56,12 @@ int main()
             OrderSide side = OrderSideConverter::from_string(j["side"]);
             int quantity = j["quantity"];
             auto price = Price4(std::string(j["limit_price"])); 
+            if(!config.validate_price(price) || !config.validate_symbol(symbol)) {
+                std::cerr << "Error price/symbol for order " << order_id << std::endl;
+            }
             auto order = Order(order_id, symbol, side, OrderType::LIMIT, TimeInForce::DAY, price, quantity, time);
         }else if(j["type"] == std::string("CANCEL")) {
-
+            int64_t time = j["time"], order_id = j["order_id"];
         }
     }
 

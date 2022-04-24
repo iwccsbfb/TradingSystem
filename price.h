@@ -46,6 +46,14 @@ public:
         return unscaled_ == other.unscaled_;
     }
 
+    bool operator <= (const Price4& other) const {
+        return unscaled_ < other.unscaled_ || unscaled_ == other.unscaled_;
+    }
+
+    bool operator >= (const Price4& other) const {
+        return unscaled_ > other.unscaled_ || unscaled_ == other.unscaled_;
+    }
+
     bool operator != (const Price4& other) const {
         return unscaled_ != other.unscaled_;
     }

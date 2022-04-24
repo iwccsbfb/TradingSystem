@@ -29,11 +29,38 @@ class OrderBook {
 public:
     OrderBook() = default;
 
-    // insert: O(logN)
-    void insert(const Order& order) {        
-        std::set<Order> &orders = (order.side == OrderSide::BUY) ? buy_orders : sell_orders;
-        orders.insert(order);
-        m[order.order_id] = &order;
+    void insert(const Order& order) { 
+        Order no(order); // new order
+        std::set<Order> &match_orders = (order.side == OrderSide::SELL) ? buy_orders : sell_orders;
+        // for(auto it = buy_orders.begin(); it != buy_orders.end() && order.price <= it->price; it++) {
+        while(!match_orders.empty()) {
+            auto node = match_orders.extract(match_orders.begin());
+            Order &o = node.value();
+            if( (no.side == OrderSide::SELL && no.price > o.price) || 
+                (no.side == OrderSide::BUY && no.price < o.price))
+                break;
+            if(o.quantity >= no.quantity) { // match new-order completely
+                o.quantity -= no.quantity;
+                no.quantity = 0;
+                // TODO: print matching information
+            }
+            else { // match old order completely
+                no.quantity -= o.quantity;
+                o.quantity = 0;
+            }
+            if (o.quantity == 0)
+                o.done(); // handle ICEBERG order
+            if (o.quantity != 0)
+                match_orders.insert(std::move(node));
+            if(no.quantity == 0)
+                break;
+        }
+        if(no.quantity != 0) {
+            // insert: O(logN)
+            std::set<Order> &orders = (order.side == OrderSide::BUY) ? buy_orders : sell_orders;
+            orders.insert(no);
+            m[order.order_id] = &no;
+        }
     }
 
     // remove certain element in a set: log(N)

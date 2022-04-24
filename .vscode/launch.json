@@ -28,6 +28,13 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "Launch(gdb)",
+            "type": "by-gdb",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.exe",
+            "cwd": "${workspaceRoot}"
         }
     ]
 }
